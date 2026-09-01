@@ -67,7 +67,23 @@ build, which serves `dist/` exactly as Cloudflare will.
 ## Email
 
 Sign-in codes go through Supabase's built-in SMTP, which is rate-limited to a couple of
-messages per hour and is test-only. Before real customers, configure custom SMTP
-(Resend/Postmark) in Supabase → Project Settings → Authentication → SMTP Settings, then
-raise the email rate limit under Authentication → Rate Limits. The Magic Link template
-must contain `{{ .Token }}` or no code appears in the email.
+messages per hour and is test-only. The Magic Link template must contain `{{ .Token }}`
+or no code appears in the email.
+
+## Before real customers
+
+Sign-in is mandatory, so email delivery is now load-bearing: no email, no till. These are
+the open blockers, roughly in order.
+
+- [ ] **Custom SMTP.** The built-in sender allows ~2 emails/hour — enough to test with,
+      not enough for one café. Configure Resend/Postmark under Authentication → SMTP
+      Settings, *and* raise Authentication → Rate Limits (custom SMTP does not lift the
+      throttle on its own). Gmail SMTP with an App Password works as a stopgap.
+- [ ] **A domain.** Needed to verify a sending domain, and `*.workers.dev` cannot be used
+      for email — it belongs to Cloudflare. Also what a café owner will actually trust.
+- [ ] **Supabase Pro ($25/mo).** The free tier has no automated backups and pauses after
+      7 days of inactivity. Not acceptable once a real café's sales live in it.
+- [ ] **Onboarding.** A new account currently lands on the 21-item demo menu instead of
+      being asked for its shop name, tax rate, currency and first items.
+- [ ] **Verify offline operation on the real device** the café will use (DevTools →
+      Application → Service Workers, then Network → Offline).
