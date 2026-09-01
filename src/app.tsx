@@ -4,6 +4,7 @@ import { Toast } from './components/Toast'
 import { CheckoutScreen } from './screens/CheckoutScreen'
 import { HistoryScreen } from './screens/HistoryScreen'
 import { MenuScreen } from './screens/MenuScreen'
+import { OnboardingScreen } from './screens/OnboardingScreen'
 import { OrderScreen } from './screens/OrderScreen'
 import { ReceiptScreen } from './screens/ReceiptScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
@@ -12,9 +13,10 @@ import { SummaryScreen } from './screens/SummaryScreen'
 import { PosProvider, usePos } from './store'
 
 function Shell() {
-  const { loaded, signedIn } = usePos()
+  const { loaded, signedIn, settings } = usePos()
   if (!signedIn) return <SignInScreen />
   if (!loaded) return null
+  if (!settings.onboarded) return <OnboardingScreen />
   return (
     <div class="app">
       <Nav />

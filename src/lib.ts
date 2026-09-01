@@ -39,8 +39,12 @@ export const CURRENCIES = ['₹', '£', '$', '€']
 
 export const DEFAULT_SETTINGS: Settings = {
   shopName: 'Bytes', logo: null, theme: 'Terracotta', taxRate: 20,
-  footer: 'Thanks — see you tomorrow.', orderNo: 1001, currency: '₹'
+  footer: 'Thanks — see you tomorrow.', orderNo: 1001, currency: '₹',
+  onboarded: false
 }
+
+/** Tax presets offered in onboarding and Setup. India's GST on food service is 5%. */
+export const TAX_OPTIONS = [0, 5, 12, 18]
 
 export const money = (minor: number, cur = '₹'): string => cur + (minor / 100).toFixed(2)
 

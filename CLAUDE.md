@@ -14,6 +14,10 @@ already carries what sync needs, and `store_id` gets added then).
 ## Architecture
 
 - **Preact + TypeScript (strict)** — React idioms apply; `preact/hooks`, class components are banned.
+- **App gates (in `src/app.tsx`, before the router):** not signed in → `SignInScreen`; signed in
+  but `settings.onboarded === false` → `OnboardingScreen`; otherwise the till. Onboarding
+  collects shop name, currency, tax and the first items, then sets `onboarded: true` — every
+  value stays editable in Setup afterwards.
 - **Routing:** `preact-iso` — one `<Route>` per screen in `src/app.tsx`. Never conditional screen
   rendering off a `screen` state variable. Plain `<a href>` navigates; `useLocation().route()` for
   programmatic navigation. Screens that depend on transient state (checkout, receipt) redirect

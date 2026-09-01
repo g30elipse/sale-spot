@@ -46,6 +46,8 @@ interface PosStore {
   voidOrder: (id: string) => void
   toggleSoldOut: (id: string) => void
   merge: (rows: CsvRow[]) => void
+  /** replace the whole menu — used by onboarding to seed or clear it */
+  setMenu: (items: Item[]) => void
 }
 
 /** Set just before the post-sign-in reload, so the next boot restores from the server. */
@@ -223,6 +225,8 @@ export function PosProvider({ children }: { children: ComponentChildren }) {
     })
   }, [showToast])
 
+  const setMenu = useCallback((next: Item[]) => setItems(next), [])
+
   const cartSubtotal = useMemo(() => cart.reduce((s, l) => s + l.unit * l.qty, 0), [cart])
   const fmt = useCallback((pence: number) => money(pence, settings.currency), [settings.currency])
 
@@ -299,11 +303,11 @@ export function PosProvider({ children }: { children: ComponentChildren }) {
     syncEnabled, queued, syncNote, syncNow, auth, signedIn,
     sendCode: requestCode, verifyCode: submitCode, signOutAccount,
     fmt, showToast, patchSettings, addToCart, updateLine, setLineQty, removeLine, clearCart,
-    completeOrder, clearReceipt, voidOrder, toggleSoldOut, merge
+    completeOrder, clearReceipt, voidOrder, toggleSoldOut, merge, setMenu
   }), [loaded, items, orders, settings, cart, cartSubtotal, receipt, online, now, toast,
     queued, syncNote, syncNow, auth, signedIn, requestCode, submitCode, signOutAccount,
     fmt, showToast, patchSettings, addToCart, updateLine, setLineQty, removeLine, clearCart,
-    completeOrder, clearReceipt, voidOrder, toggleSoldOut, merge])
+    completeOrder, clearReceipt, voidOrder, toggleSoldOut, merge, setMenu])
 
   return <PosContext.Provider value={store}>{children}</PosContext.Provider>
 }

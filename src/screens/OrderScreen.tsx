@@ -13,6 +13,7 @@ export function OrderScreen() {
   const [cat, setCat] = useState(CATS[0])
   const [sheet, setSheet] = useState<SheetState | null>(null)
 
+  const shown = items.filter(m => m.cat === cat)
   const openSheet = (item: Item) =>
     setSheet({ itemId: item.id, sel: defaults(item), qty: 1, lineKey: null })
 
@@ -27,13 +28,23 @@ export function OrderScreen() {
             ))}
           </div>
           <div class="order__scroll">
-            <div class="order__grid">
-              {items.filter(m => m.cat === cat).map(item => (
-                <ItemTile key={item.id} item={item}
-                  onTap={() => addToCart(item, defaults(item), 1)}
-                  onCustomise={() => openSheet(item)} />
-              ))}
-            </div>
+            {shown.length === 0 ? (
+              <div class="order__empty">
+                <p>
+                  {items.length === 0
+                    ? <>No items on the menu yet. Add them in <a href="/menu">Menu</a>.</>
+                    : <>Nothing in {cat} yet. Add items in <a href="/menu">Menu</a>.</>}
+                </p>
+              </div>
+            ) : (
+              <div class="order__grid">
+                {shown.map(item => (
+                  <ItemTile key={item.id} item={item}
+                    onTap={() => addToCart(item, defaults(item), 1)}
+                    onCustomise={() => openSheet(item)} />
+                ))}
+              </div>
+            )}
           </div>
         </section>
         <CartPanel setSheet={setSheet} />

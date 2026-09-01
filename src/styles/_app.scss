@@ -119,6 +119,11 @@ a { color: var(--color-accent-700); &:hover { color: var(--color-accent-800); } 
   &__cats { display: flex; gap: 10px; flex-wrap: wrap; }
   &__scroll { flex: 1; min-height: 0; overflow: auto; padding: 2px; }
   &__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: var(--space-3); }
+  &__empty {
+    height: 100%; display: grid; place-items: center; padding: 40px 20px;
+    p { margin: 0; max-width: 34ch; text-align: center; text-wrap: pretty;
+        color: var(--color-neutral-600); font-size: 15px; }
+  }
 }
 .tile {
   position: relative; min-height: 124px; padding: 16px;
@@ -307,6 +312,55 @@ a { color: var(--color-accent-700); &:hover { color: var(--color-accent-800); } 
   &__code { text-align: center; letter-spacing: .4em; font-family: var(--font-heading); font-size: 22px; }
   &__submit { width: 100%; }
   &__back { margin-top: var(--space-3); font-size: 14px; }
+}
+
+// ── onboarding ────────────────────────────────────────────────────────
+.onboard {
+  min-height: 100vh; display: grid; place-items: center; padding: var(--space-4);
+  background: var(--color-bg); color: var(--color-text); font-family: var(--font-body);
+  overflow: auto;
+
+  &__card {
+    width: min(560px, 100%); background: var(--color-surface);
+    border-radius: var(--radius-lg); padding: var(--space-6);
+    box-shadow: var(--shadow-md); animation: riseIn .28s ease both;
+  }
+  &__head { display: flex; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-3); }
+  &__kicker {
+    font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--color-neutral-600); margin-bottom: 6px;
+  }
+  &__title { font-family: var(--font-heading); font-size: 27px; line-height: 1.15; margin: 0; }
+  &__steps { display: flex; gap: 6px; flex: none; padding-top: 6px; }
+  &__dot {
+    width: 9px; height: 9px; border-radius: 999px; background: var(--color-neutral-300);
+    &--on { background: var(--color-accent); }
+  }
+  &__lead {
+    font-size: 15px; color: var(--color-neutral-700); text-wrap: pretty;
+    margin: 0 0 var(--space-4);
+  }
+  &__next { width: 100%; margin-top: var(--space-4); }
+  &__actions { display: flex; gap: 12px; margin-top: var(--space-6); }
+  &__row { display: flex; gap: var(--space-3); }
+  &__add { width: 100%; margin-top: var(--space-3); }
+  &__sample { width: 100%; margin-top: var(--space-3); font-size: 14px; }
+  &__signout {
+    display: block; margin: var(--space-4) auto 0;
+    font-size: 13px; color: var(--color-neutral-600);
+  }
+
+  &__items {
+    background: var(--color-bg); border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3); margin-bottom: var(--space-4);
+  }
+  &__item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    & + & { border-top: 1px solid var(--color-divider); }
+  }
+  &__item-name { flex: 1; min-width: 0; font-weight: 700; font-size: 15px; }
+  &__item-cat { font-size: 12px; color: var(--color-neutral-600); }
+  &__item-price { font-family: var(--font-heading); font-size: 16px; min-width: 64px; text-align: right; }
 }
 
 .account {

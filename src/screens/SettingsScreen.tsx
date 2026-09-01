@@ -1,11 +1,9 @@
 import { AccountPanel } from '../components/AccountPanel'
 import { Header } from '../components/Header'
 import { Pill, readFile } from '../components/ui'
-import { CURRENCIES } from '../lib'
+import { CURRENCIES, TAX_OPTIONS } from '../lib'
 import { usePos } from '../store'
 import { THEMES, ramp } from '../theme'
-
-const TAX_OPTIONS = [0, 5, 12.5, 20]
 
 export function SettingsScreen() {
   const { settings, online, patchSettings, syncNote } = usePos()

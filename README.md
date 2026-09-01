@@ -83,7 +83,7 @@ the open blockers, roughly in order.
       for email — it belongs to Cloudflare. Also what a café owner will actually trust.
 - [ ] **Supabase Pro ($25/mo).** The free tier has no automated backups and pauses after
       7 days of inactivity. Not acceptable once a real café's sales live in it.
-- [ ] **Onboarding.** A new account currently lands on the 21-item demo menu instead of
-      being asked for its shop name, tax rate, currency and first items.
+- [x] ~~**Onboarding.**~~ New accounts are asked for shop name, currency, tax and their
+      first items before the till opens.
 - [ ] **Verify offline operation on the real device** the café will use (DevTools →
       Application → Service Workers, then Network → Offline).

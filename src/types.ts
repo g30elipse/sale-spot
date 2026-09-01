@@ -70,6 +70,8 @@ export interface Settings {
   footer: string
   orderNo: number
   currency: string
+  /** false until the setup wizard is finished; gates the till for new accounts */
+  onboarded: boolean
 }
 
 export interface ToastMsg {
