@@ -58,8 +58,11 @@ npm run build && npx wrangler pages deploy dist --project-name bytes-pos
 Configuration (Site URL and Redirect URLs). Sign-in codes work without it, but the
 click-the-link fallback will bounce to the wrong host.
 
-`public/_redirects` handles client-side routing — without it, refreshing on `/history`
-returns a 404.
+Client-side routing is handled by `not_found_handling: "single-page-application"` in
+`wrangler.jsonc` — without it, refreshing on `/history` returns a 404. Don't use a
+`_redirects` file with `/* /index.html 200`: Cloudflare's Workers asset pipeline rejects
+that rule as an infinite loop. Check routing locally with `npx wrangler dev` after a
+build, which serves `dist/` exactly as Cloudflare will.
 
 ## Email
 

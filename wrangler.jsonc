@@ -1,0 +1,11 @@
+{
+  // Static-asset deploy to Cloudflare. "single-page-application" serves
+  // index.html for unmatched routes, so refreshing on /history works —
+  // a _redirects "/* /index.html 200" rule is rejected as a loop here.
+  "name": "sale-spot",
+  "compatibility_date": "2026-01-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
