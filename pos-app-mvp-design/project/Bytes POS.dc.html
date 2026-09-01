@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-ef7facf3-8038-4752-aaf6-b962ab2e772f/styles.css">
+<script src="_ds/organic-ef7facf3-8038-4752-aaf6-b962ab2e772f/_ds_bundle.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  a { color: var(--color-accent-700); }
+  a:hover { color: var(--color-accent-800); }
+  @keyframes riseIn { from { transform: translateY(14px); opacity: 0 } to { transform: none; opacity: 1 } }
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;width:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);overflow:hidden">
+
+  <nav style="width:96px;flex:none;background:var(--color-accent-800);display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 8px">
+    <div style="width:52px;height:52px;border-radius:999px;background:var(--color-bg);color:var(--color-accent-800);display:grid;place-items:center;font-family:var(--font-heading);font-size:22px;margin-bottom:14px;overflow:hidden;flex:none">
+      <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%;height:100%;background:{{ logoBg }}"></div>
+      </sc-if>
+      <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+        <span>{{ shopInitial }}</span>
+      </sc-if>
+    </div>
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+      <div onClick="{{ n.tap }}" role="button" tabindex="0" style="width:80px;padding:10px 0 8px;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;background:{{ n.bg }};color:{{ n.fg }}" style-hover="background:var(--color-accent-700)">
+        <span style="display:block" dangerouslySetInnerHTML="{{ n.icon }}"></span>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">{{ n.label }}</span>
+        </sc-if>
+      </div>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div onClick="{{ toggleOnline }}" role="button" tabindex="0" title="Toggle connection (demo)" style="width:80px;padding:10px 0;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:{{ netFg }}" style-hover="background:var(--color-accent-700)">
+      <span dangerouslySetInnerHTML="{{ netIcon }}"></span>
+      <span style="font-size:11px;font-weight:700">{{ netLabel }}</span>
+    </div>
+  </nav>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden">
+
+    <header style="flex:none;display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-6) var(--space-3)">
+      <div style="min-width:0">
+        <div style="font-family:var(--font-heading);font-size:26px;line-height:1.1">{{ screenTitle }}</div>
+        <div style="font-size:13px;color:var(--color-neutral-600);margin-top:2px">{{ screenSub }}</div>
+      </div>
+      <div style="flex:1"></div>
+      <sc-if value="{{ isMenu }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px">
+          <button onClick="{{ openCsv }}" class="btn btn-secondary" style="border-radius:999px;min-height:48px;padding-inline:22px;font-size:15px">Import CSV</button>
+          <button onClick="{{ openNewItem }}" class="btn btn-primary" style="border-radius:999px;min-height:48px;padding-inline:24px;font-size:15px;font-weight:700">New item</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ queued }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ syncNow }}" role="button" tabindex="0" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:var(--color-accent-200);color:var(--color-accent-800);font-size:13px;font-weight:700;cursor:pointer" style-hover="background:var(--color-accent-300)">{{ queuedLabel }}</div>
+      </sc-if>
+      <div style="padding:8px 16px;border-radius:999px;background:var(--color-surface);font-size:13px;font-weight:700;color:var(--color-neutral-700)">{{ clock }}</div>
+    </header>
+
+    <!-- ORDER -->
+    <sc-if value="{{ isOrder }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;min-height:0;display:flex;gap:var(--space-4);padding:0 var(--space-6) var(--space-6)">
+        <section style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-3)">
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+              <div onClick="{{ c.tap }}" role="button" tabindex="0" style="padding:12px 22px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--color-divider);background:{{ c.bg }};color:{{ c.fg }}" style-hover="border-color:var(--color-accent)">{{ c.label }}</div>
+            </sc-for>
+          </div>
+          <div style="flex:1;min-height:0;overflow:auto;padding:2px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:var(--space-3)">
+              <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="8">
+                <div onClick="{{ t.tap }}" role="button" tabindex="0" style="position:relative;min-height:124px;padding:16px;border-radius:var(--radius-lg);border:1px solid var(--color-divider);background:{{ t.bg }};color:{{ t.fg }};box-shadow:var(--shadow-sm);cursor:{{ t.cursor }};display:flex;flex-direction:column;justify-content:space-between;gap:10px" style-hover="box-shadow:var(--shadow-md);border-color:var(--color-accent-300)" style-active="background:var(--color-accent-200)">
+                  <div style="font-size:18px;font-weight:700;line-height:1.25;text-wrap:pretty;padding-right:34px">{{ t.name }}</div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-family:var(--font-heading);font-size:20px">{{ t.price }}</span>
+                    <span style="font-size:12px;color:var(--color-neutral-600);font-weight:700">{{ t.hint }}</span>
+                  </div>
+                  <sc-if value="{{ t.hasMods }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ t.customise }}" role="button" tabindex="0" title="Customise" style="position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:999px;display:grid;place-items:center;background:var(--color-accent-100);color:var(--color-accent-700)" style-hover="background:var(--color-accent-300)">
+                      <span dangerouslySetInnerHTML="{{ pencilIcon }}"></span>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <aside style="width:392px;flex:none;display:flex;flex-direction:column;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden">
+          <div style="flex:none;display:flex;align-items:baseline;gap:10px;padding:var(--space-4) var(--space-4) var(--space-2)">
+            <span style="font-family:var(--font-heading);font-size:20px">{{ orderLabel }}</span>
+            <span style="font-size:13px;color:var(--color-neutral-600);font-weight:700">{{ cartCountLabel }}</span>
+            <div style="flex:1"></div>
+            <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ clearCart }}" class="btn btn-ghost" style="font-size:13px">Clear</button>
+            </sc-if>
+          </div>
+          <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-4)">
+            <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;display:grid;place-items:center;text-align:center;color:var(--color-neutral-600);font-size:14px;padding:40px 20px">Tap a drink to start.<br>Pencil to customise.</div>
+            </sc-if>
+            <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--color-divider)">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:16px;font-weight:700;line-height:1.3">{{ l.name }}</div>
+                  <sc-if value="{{ l.hasMods }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ l.edit }}" role="button" tabindex="0" style="font-size:13px;color:var(--color-accent-700);margin-top:3px;cursor:pointer;font-weight:600">{{ l.mods }}</div>
+                  </sc-if>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+                    <div onClick="{{ l.dec }}" role="button" tabindex="0" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;background:var(--color-bg);border:1px solid var(--color-divider);cursor:pointer" style-hover="background:var(--color-accent-100)"><span dangerouslySetInnerHTML="{{ minusIcon }}"></span></div>
+                    <span style="min-width:26px;text-align:center;font-size:17px;font-weight:700">{{ l.qty }}</span>
+                    <div onClick="{{ l.inc }}" role="button" tabindex="0" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;background:var(--color-bg);border:1px solid var(--color-divider);cursor:pointer" style-hover="background:var(--color-accent-100)"><span dangerouslySetInnerHTML="{{ plusIcon }}"></span></div>
+                  </div>
+                </div>
+                <div style="text-align:right;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
+                  <span style="font-family:var(--font-heading);font-size:18px">{{ l.total }}</span>
+                  <div onClick="{{ l.remove }}" role="button" tabindex="0" title="Remove" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;color:var(--color-neutral-600);cursor:pointer" style-hover="background:var(--color-accent-200);color:var(--color-accent-800)"><span dangerouslySetInnerHTML="{{ trashIcon }}"></span></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:none;padding:var(--space-4);display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-neutral-700)"><span>Net</span><span>{{ netTotal }}</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-neutral-700)"><span>{{ taxLabel }}</span><span>{{ taxTotal }}</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:6px"><span style="font-family:var(--font-heading);font-size:22px">Total</span><span style="font-family:var(--font-heading);font-size:30px">{{ grandTotal }}</span></div>
+            <button onClick="{{ goCheckout }}" disabled="{{ cartEmpty }}" class="btn btn-primary" style="border-radius:999px;min-height:64px;font-size:19px;font-weight:700;margin-top:8px">{{ chargeLabel }}</button>
+          </div>
+        </aside>
+      </div>
+    </sc-if>
+
+    <!-- CHECKOUT -->
+    <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;gap:var(--space-6);padding:0 var(--space-6) var(--space-6);overflow:auto">
+        <section style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-4)">
+          <div style="display:flex;gap:var(--space-3)">
+            <sc-for list="{{ tenders }}" as="t" hint-placeholder-count="2">
+              <div onClick="{{ t.tap }}" role="button" tabindex="0" style="flex:1;padding:24px;border-radius:var(--radius-lg);border:2px solid {{ t.border }};background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;box-shadow:var(--shadow-sm)" style-hover="border-color:var(--color-accent)">
+                <div style="font-family:var(--font-heading);font-size:22px">{{ t.label }}</div>
+                <div style="font-size:13px;margin-top:6px;opacity:.75">{{ t.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ isCash }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4)">
+              <div style="font-size:13px;font-weight:700;color:var(--color-neutral-700);margin-bottom:12px">CASH TENDERED</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <sc-for list="{{ cashOptions }}" as="c" hint-placeholder-count="5">
+                  <div onClick="{{ c.tap }}" role="button" tabindex="0" style="min-width:104px;min-height:60px;padding:0 20px;border-radius:999px;display:grid;place-items:center;font-family:var(--font-heading);font-size:20px;cursor:pointer;border:1px solid var(--color-divider);background:{{ c.bg }};color:{{ c.fg }}" style-hover="border-color:var(--color-accent)">{{ c.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:12px;margin-top:var(--space-4)">
+                <span style="font-size:15px;color:var(--color-neutral-700)">Change due</span>
+                <span style="font-family:var(--font-heading);font-size:32px;color:var(--color-accent-700)">{{ changeDue }}</span>
+              </div>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:12px;margin-top:auto">
+            <button onClick="{{ backToOrder }}" class="btn btn-secondary" style="border-radius:999px;min-height:60px;padding-inline:28px;font-size:16px">Back to order</button>
+            <button onClick="{{ completeOrder }}" disabled="{{ noTender }}" class="btn btn-primary" style="border-radius:999px;min-height:60px;flex:1;font-size:19px;font-weight:700">{{ takeLabel }}</button>
+          </div>
+        </section>
+        <aside style="width:392px;flex:none;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);align-self:flex-start">
+          <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-3)">{{ orderLabel }}</div>
+          <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;padding:9px 0;font-size:15px">
+              <span style="font-weight:700;min-width:26px">{{ l.qtyX }}</span>
+              <span style="flex:1;min-width:0">{{ l.name }}<sc-if value="{{ l.hasMods }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:12px;color:var(--color-neutral-600)">{{ l.mods }}</span></sc-if></span>
+              <span>{{ l.total }}</span>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider);margin:var(--space-3) 0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-neutral-700)"><span>{{ taxLabel }}</span><span>{{ taxTotal }}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px"><span style="font-family:var(--font-heading);font-size:22px">Total</span><span style="font-family:var(--font-heading);font-size:30px">{{ grandTotal }}</span></div>
+        </aside>
+      </div>
+    </sc-if>
+
+    <!-- RECEIPT -->
+    <sc-if value="{{ isReceipt }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-6) var(--space-6);display:flex;gap:var(--space-6);justify-content:center;align-items:flex-start">
+        <div style="width:340px;background:var(--color-neutral-100);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:28px 26px;animation:riseIn .28s ease both">
+          <div style="text-align:center">
+            <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+              <div style="width:56px;height:56px;margin:0 auto 8px;border-radius:999px;background:{{ logoBg }}"></div>
+            </sc-if>
+            <div style="font-family:var(--font-heading);font-size:24px">{{ shopName }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-600);margin-top:4px">{{ receiptMeta }}</div>
+          </div>
+          <div style="height:1px;background:var(--color-divider);margin:18px 0"></div>
+          <sc-for list="{{ receiptLines }}" as="l" hint-placeholder-count="3">
+            <div style="display:flex;gap:8px;font-size:13px;padding:5px 0">
+              <span style="min-width:22px">{{ l.qtyX }}</span>
+              <span style="flex:1;min-width:0">{{ l.name }}<sc-if value="{{ l.hasMods }}" hint-placeholder-val="{{ false }}"><span style="display:block;color:var(--color-neutral-600);font-size:11px">{{ l.mods }}</span></sc-if></span>
+              <span>{{ l.total }}</span>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider);margin:14px 0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--color-neutral-700)"><span>{{ taxLabel }}</span><span>{{ receiptTax }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;margin-top:6px"><span>Total</span><span>{{ receiptTotal }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--color-neutral-700);margin-top:4px"><span>{{ receiptTender }}</span><span>{{ receiptTendered }}</span></div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-600);margin-top:20px">{{ receiptFooter }}</div>
+        </div>
+        <div style="width:300px;display:flex;flex-direction:column;gap:12px;padding-top:8px">
+          <div style="font-size:14px;color:var(--color-neutral-700);text-wrap:pretty">{{ syncNote }}</div>
+          <button onClick="{{ printReceipt }}" class="btn btn-secondary" style="border-radius:999px;min-height:56px;font-size:16px">Print receipt</button>
+          <button onClick="{{ emailReceipt }}" class="btn btn-secondary" style="border-radius:999px;min-height:56px;font-size:16px">Email receipt</button>
+          <button onClick="{{ newOrder }}" class="btn btn-primary" style="border-radius:999px;min-height:64px;font-size:19px;font-weight:700">New order</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- HISTORY -->
+    <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-6) var(--space-6)">
+        <div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-4) var(--space-2)">
+          <table class="table" style="width:100%">
+            <thead><tr><th style="text-align:left">Order</th><th style="text-align:left">Time</th><th style="text-align:left">Items</th><th style="text-align:left">Tender</th><th style="text-align:right">Total</th><th style="text-align:left">Sync</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ historyRows }}" as="r" hint-placeholder-count="6">
+                <tr style="opacity:{{ r.opacity }}">
+                  <td style="font-weight:700">{{ r.no }}</td>
+                  <td>{{ r.time }}</td>
+                  <td style="max-width:280px">{{ r.items }}</td>
+                  <td>{{ r.tender }}</td>
+                  <td style="text-align:right;font-weight:700">{{ r.total }}</td>
+                  <td><span class="tag {{ r.syncClass }}">{{ r.sync }}</span></td>
+                  <td style="text-align:right"><sc-if value="{{ r.canVoid }}" hint-placeholder-val="{{ true }}"><button onClick="{{ r.void }}" class="btn btn-ghost" style="font-size:13px">Void</button></sc-if><sc-if value="{{ r.voided }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--color-neutral-600)">voided</span></sc-if></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- DAY SUMMARY -->
+    <sc-if value="{{ isSummary }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-6) var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--space-3)">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+            <div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm)">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600)">{{ k.label }}</div>
+              <div style="font-family:var(--font-heading);font-size:34px;margin-top:8px;line-height:1">{{ k.value }}</div>
+              <div style="font-size:13px;color:var(--color-neutral-700);margin-top:6px">{{ k.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:var(--space-4);flex-wrap:wrap">
+          <div style="flex:1;min-width:320px;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4)">
+            <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-3)">Best sellers</div>
+            <sc-for list="{{ topItems }}" as="t" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;padding:8px 0">
+                <span style="flex:none;width:34px;height:34px;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-800);display:grid;place-items:center;font-weight:700;font-size:14px">{{ t.qty }}</span>
+                <span style="flex:1;min-width:0;font-size:15px">{{ t.name }}</span>
+                <span style="height:10px;border-radius:999px;background:var(--color-accent-400);width:{{ t.bar }}"></span>
+                <span style="font-weight:700;font-size:15px;min-width:64px;text-align:right">{{ t.total }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="width:340px;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4)">
+            <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-3)">Close the day</div>
+            <div style="font-size:14px;color:var(--color-neutral-700);text-wrap:pretty;margin-bottom:var(--space-4)">{{ closeNote }}</div>
+            <button onClick="{{ syncNow }}" class="btn btn-secondary" style="border-radius:999px;min-height:52px;width:100%">Sync queued orders</button>
+            <button onClick="{{ printZ }}" class="btn btn-primary" style="border-radius:999px;min-height:56px;width:100%;margin-top:10px;font-weight:700">Print Z-report</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MENU MANAGEMENT -->
+    <sc-if value="{{ isMenu }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-6) var(--space-6)">
+        <div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-4) var(--space-2)">
+          <table class="table" style="width:100%">
+            <thead><tr><th style="text-align:left">Item</th><th style="text-align:left">Category</th><th style="text-align:left">Modifiers</th><th style="text-align:right">Price</th><th style="text-align:right">Available</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ menuRows }}" as="m" hint-placeholder-count="8">
+                <tr>
+                  <td style="font-weight:700">{{ m.name }}</td>
+                  <td>{{ m.cat }}</td>
+                  <td style="color:var(--color-neutral-600);font-size:13px">{{ m.mods }}</td>
+                  <td style="text-align:right;font-weight:700">{{ m.price }}</td>
+                  <td style="text-align:right">
+                    <div onClick="{{ m.toggle }}" role="button" tabindex="0" style="display:inline-flex;align-items:center;width:64px;height:34px;border-radius:999px;padding:4px;cursor:pointer;justify-content:{{ m.justify }};background:{{ m.trackBg }}">
+                      <span style="width:26px;height:26px;border-radius:999px;background:var(--color-neutral-100);box-shadow:var(--shadow-sm)"></span>
+                    </div>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- SETTINGS -->
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 var(--space-6) var(--space-6);display:flex;gap:var(--space-4);flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:1;min-width:340px;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4)">
+          <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-4)">This shop</div>
+          <div class="field" style="margin-bottom:var(--space-4)"><label>Name — shows on the till and every receipt</label><input class="input" style="min-height:52px;border-radius:999px;font-size:16px;padding-inline:18px" value="{{ shopName }}" onInput="{{ setShopName }}"></div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:10px">Logo</div>
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <div style="width:76px;height:76px;flex:none;border-radius:999px;background:var(--color-bg);border:1px solid var(--color-divider);display:grid;place-items:center;overflow:hidden;font-family:var(--font-heading);font-size:28px;color:var(--color-accent-700)">
+              <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}"><div style="width:100%;height:100%;background:{{ logoBg }}"></div></sc-if>
+              <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}"><span>{{ shopInitial }}</span></sc-if>
+            </div>
+            <label class="btn btn-secondary" style="border-radius:999px;min-height:48px;padding-inline:22px;font-size:15px;cursor:pointer">
+              <span>{{ logoCta }}</span>
+              <input type="file" accept="image/*" onChange="{{ pickLogo }}" style="display:none">
+            </label>
+            <sc-if value="{{ hasLogo }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ clearLogo }}" class="btn btn-ghost" style="font-size:14px">Remove</button>
+            </sc-if>
+          </div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin:var(--space-4) 0 10px">Theme</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <sc-for list="{{ themes }}" as="t" hint-placeholder-count="5">
+              <div onClick="{{ t.tap }}" role="button" tabindex="0" title="{{ t.label }}" style="display:flex;align-items:center;gap:10px;padding:8px 18px 8px 8px;border-radius:999px;cursor:pointer;border:2px solid {{ t.border }};background:var(--color-neutral-100)" style-hover="border-color:var(--color-accent)">
+                <span style="width:34px;height:34px;border-radius:999px;background:{{ t.swatch }};box-shadow:inset 0 0 0 4px {{ t.swatch2 }}"></span>
+                <span style="font-size:14px;font-weight:700">{{ t.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="height:1px;background:var(--color-divider);margin:var(--space-6) 0 var(--space-4)"></div>
+          <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-4)">Tax</div>
+          <div style="font-size:14px;color:var(--color-neutral-700);margin-bottom:12px">One rate, applied to every line. Menu prices are tax-inclusive.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ taxOptions }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.tap }}" role="button" tabindex="0" style="min-width:88px;min-height:56px;padding:0 20px;border-radius:999px;display:grid;place-items:center;font-family:var(--font-heading);font-size:19px;cursor:pointer;border:1px solid var(--color-divider);background:{{ t.bg }};color:{{ t.fg }}" style-hover="border-color:var(--color-accent)">{{ t.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="width:392px;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4)">
+          <div style="font-family:var(--font-heading);font-size:20px;margin-bottom:var(--space-4)">Receipts &amp; sync</div>
+          <div class="field" style="margin-bottom:var(--space-3)"><label>Receipt footer</label><input class="input" value="{{ footerText }}" onChange="{{ setFooter }}"></div>
+          <div class="field" style="margin-bottom:var(--space-3)"><label>Receipt printer</label><input class="input" value="Star TSP143 · 192.168.1.42" readonly="readonly"></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius-md);background:var(--color-bg);font-size:14px">
+            <span style="width:10px;height:10px;border-radius:999px;background:{{ netDot }}"></span>
+            <span style="flex:1">{{ syncNote }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <!-- MODIFIER SHEET -->
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:color-mix(in srgb, #201e1d 46%, transparent);display:grid;place-items:end center;z-index:40;animation:fadeIn .16s ease both">
+      <div style="width:min(760px,94vw);max-height:88vh;overflow:auto;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:var(--space-6);box-shadow:var(--shadow-lg);animation:riseIn .22s ease both">
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <span style="font-family:var(--font-heading);font-size:28px">{{ sheetName }}</span>
+          <span style="font-size:15px;color:var(--color-neutral-600);font-weight:700">{{ sheetBase }}</span>
+          <div style="flex:1"></div>
+          <div onClick="{{ closeSheet }}" role="button" tabindex="0" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:var(--color-surface)" style-hover="background:var(--color-accent-200)"><span dangerouslySetInnerHTML="{{ xIcon }}"></span></div>
+        </div>
+        <sc-for list="{{ sheetGroups }}" as="g" hint-placeholder-count="2">
+          <div style="margin-top:var(--space-4)">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:10px">{{ g.label }}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+                <div onClick="{{ o.tap }}" role="button" tabindex="0" style="min-height:56px;padding:0 22px;border-radius:999px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:16px;font-weight:700;border:1px solid var(--color-divider);background:{{ o.bg }};color:{{ o.fg }}" style-hover="border-color:var(--color-accent)">
+                  <span>{{ o.label }}</span>
+                  <span style="font-size:13px;font-weight:600;opacity:.75">{{ o.delta }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:var(--space-6)">
+          <div onClick="{{ sheetDec }}" role="button" tabindex="0" style="width:56px;height:56px;border-radius:999px;display:grid;place-items:center;background:var(--color-surface);cursor:pointer" style-hover="background:var(--color-accent-200)"><span dangerouslySetInnerHTML="{{ minusIcon }}"></span></div>
+          <span style="font-family:var(--font-heading);font-size:26px;min-width:34px;text-align:center">{{ sheetQty }}</span>
+          <div onClick="{{ sheetInc }}" role="button" tabindex="0" style="width:56px;height:56px;border-radius:999px;display:grid;place-items:center;background:var(--color-surface);cursor:pointer" style-hover="background:var(--color-accent-200)"><span dangerouslySetInnerHTML="{{ plusIcon }}"></span></div>
+          <button onClick="{{ confirmSheet }}" class="btn btn-primary" style="flex:1;border-radius:999px;min-height:64px;font-size:19px;font-weight:700">{{ sheetCta }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW ITEM -->
+  <sc-if value="{{ newOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:color-mix(in srgb, #201e1d 46%, transparent);display:grid;place-items:center;z-index:50;animation:fadeIn .16s ease both">
+      <div style="width:min(620px,94vw);background:var(--color-bg);border-radius:var(--radius-lg);padding:var(--space-6);box-shadow:var(--shadow-lg);animation:riseIn .22s ease both">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:var(--space-4)">
+          <span style="font-family:var(--font-heading);font-size:26px">New menu item</span>
+          <div style="flex:1"></div>
+          <div onClick="{{ closeDialog }}" role="button" tabindex="0" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:var(--color-surface)" style-hover="background:var(--color-accent-200)"><span dangerouslySetInnerHTML="{{ xIcon }}"></span></div>
+        </div>
+        <div style="display:flex;gap:var(--space-3)">
+          <div class="field" style="flex:1"><label>Name</label><input class="input" style="min-height:52px;border-radius:999px;font-size:16px;padding-inline:18px" placeholder="Iced latte" value="{{ formName }}" onInput="{{ setFormName }}"></div>
+          <div class="field" style="width:140px"><label>Price (£)</label><input class="input" style="min-height:52px;border-radius:999px;font-size:16px;padding-inline:18px" placeholder="3.90" value="{{ formPrice }}" onInput="{{ setFormPrice }}"></div>
+        </div>
+        <div style="margin-top:var(--space-3)">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:10px">Category</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ formCats }}" as="c" hint-placeholder-count="4">
+              <div onClick="{{ c.tap }}" role="button" tabindex="0" style="min-height:48px;padding:0 20px;border-radius:999px;display:grid;place-items:center;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--color-divider);background:{{ c.bg }};color:{{ c.fg }}" style-hover="border-color:var(--color-accent)">{{ c.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top:var(--space-4)">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:10px">Modifier groups</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ formMods }}" as="m" hint-placeholder-count="4">
+              <div onClick="{{ m.tap }}" role="button" tabindex="0" style="min-height:48px;padding:0 20px;border-radius:999px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--color-divider);background:{{ m.bg }};color:{{ m.fg }}" style-hover="border-color:var(--color-accent)">{{ m.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:var(--space-6)">
+          <button onClick="{{ closeDialog }}" class="btn btn-secondary" style="border-radius:999px;min-height:56px;padding-inline:26px;font-size:16px">Cancel</button>
+          <button onClick="{{ saveItem }}" disabled="{{ formInvalid }}" class="btn btn-primary" style="border-radius:999px;min-height:56px;flex:1;font-size:18px;font-weight:700">Add to menu</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- CSV IMPORT -->
+  <sc-if value="{{ csvOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:color-mix(in srgb, #201e1d 46%, transparent);display:grid;place-items:center;z-index:50;animation:fadeIn .16s ease both">
+      <div style="width:min(680px,94vw);background:var(--color-bg);border-radius:var(--radius-lg);padding:var(--space-6);box-shadow:var(--shadow-lg);animation:riseIn .22s ease both">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:var(--space-3)">
+          <span style="font-family:var(--font-heading);font-size:26px">Import menu</span>
+          <div style="flex:1"></div>
+          <div onClick="{{ closeDialog }}" role="button" tabindex="0" style="width:44px;height:44px;border-radius:999px;display:grid;place-items:center;cursor:pointer;background:var(--color-surface)" style-hover="background:var(--color-accent-200)"><span dangerouslySetInnerHTML="{{ xIcon }}"></span></div>
+        </div>
+        <div style="font-size:14px;color:var(--color-neutral-700);text-wrap:pretty">One row per item: <strong>name, category, price, modifier groups</strong> — groups separated by semicolons. A header row is fine. Existing names are updated, not duplicated.</div>
+        <label style="display:block;margin-top:var(--space-4);padding:var(--space-6);border:2px dashed var(--color-neutral-400);border-radius:var(--radius-lg);text-align:center;cursor:pointer;background:var(--color-neutral-100)" style-hover="border-color:var(--color-accent);background:var(--color-accent-100)">
+          <span style="font-family:var(--font-heading);font-size:19px">Choose a .csv file</span>
+          <span style="display:block;font-size:13px;color:var(--color-neutral-600);margin-top:6px">{{ csvFileNote }}</span>
+          <input type="file" accept=".csv,text/csv" onChange="{{ pickCsv }}" style="display:none">
+        </label>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-600);margin:var(--space-4) 0 8px">Or paste rows</div>
+        <textarea class="input" style="min-height:132px;border-radius:var(--radius-md);font-family:ui-monospace,monospace;font-size:13px;line-height:1.6;padding:14px" placeholder="Iced latte, Coffee, 3.90, Size;Milk&#10;Miso cookie, Food, 3.20," value="{{ csvText }}" onInput="{{ setCsvText }}"></textarea>
+        <div style="font-size:14px;color:var(--color-accent-700);font-weight:700;margin-top:12px;min-height:20px">{{ csvPreview }}</div>
+        <div style="display:flex;gap:12px;margin-top:var(--space-4)">
+          <button onClick="{{ closeDialog }}" class="btn btn-secondary" style="border-radius:999px;min-height:56px;padding-inline:26px;font-size:16px">Cancel</button>
+          <button onClick="{{ importCsv }}" disabled="{{ csvInvalid }}" class="btn btn-primary" style="border-radius:999px;min-height:56px;flex:1;font-size:18px;font-weight:700">{{ csvCta }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TOAST -->
+  <sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:16px;padding:14px 16px 14px 22px;border-radius:999px;background:var(--color-neutral-900);color:var(--color-neutral-100);box-shadow:var(--shadow-lg);animation:riseIn .2s ease both">
+      <span style="font-size:15px">{{ toastMsg }}</span>
+      <sc-if value="{{ toastHasAction }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ toastAction }}" role="button" tabindex="0" style="padding:10px 18px;border-radius:999px;background:var(--color-accent-400);color:var(--color-accent-900);font-weight:700;font-size:14px;cursor:pointer" style-hover="background:var(--color-accent-300)">{{ toastActionLabel }}</div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:820},&quot;taxRate&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:20,&quot;min&quot;:0,&quot;max&quot;:25,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Shop&quot;},&quot;showRailLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Shop&quot;}}">
+const ic = (d, extra) => ({ __html: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round">' + d + (extra || '') + '</svg>' });
+
+class Component extends DCLogic {
+  sizeShot = { id: 'shot', label: 'Shots', opts: [{ label: 'Single', d: 0 }, { label: 'Double', d: 0.6 }] };
+  sizeCup = { id: 'size', label: 'Size', opts: [{ label: 'Small', d: 0 }, { label: 'Regular', d: 0.4 }, { label: 'Large', d: 0.8 }] };
+  milk = { id: 'milk', label: 'Milk', opts: [{ label: 'Whole', d: 0 }, { label: 'Oat', d: 0.4 }, { label: 'Skim', d: 0 }, { label: 'Soy', d: 0.4 }] };
+  takeaway = { id: 'cup', label: 'Cup', opts: [{ label: 'Stay', d: 0 }, { label: 'Takeaway', d: 0 }] };
+  warm = { id: 'warm', label: 'Prep', opts: [{ label: 'As is', d: 0 }, { label: 'Warmed', d: 0 }, { label: 'Butter', d: 0.5 }] };
+
+  menu = [
+    { id: 'esp', name: 'Espresso', cat: 'Coffee', price: 2.4, mods: [this.sizeShot, this.takeaway] },
+    { id: 'mac', name: 'Macchiato', cat: 'Coffee', price: 2.8, mods: [this.sizeShot, this.milk, this.takeaway] },
+    { id: 'flat', name: 'Flat white', cat: 'Coffee', price: 3.4, mods: [this.milk, this.sizeShot, this.takeaway] },
+    { id: 'latte', name: 'Latte', cat: 'Coffee', price: 3.6, mods: [this.sizeCup, this.milk, this.takeaway] },
+    { id: 'capp', name: 'Cappuccino', cat: 'Coffee', price: 3.5, mods: [this.sizeCup, this.milk, this.takeaway] },
+    { id: 'filt', name: 'Filter / batch', cat: 'Coffee', price: 3.0, mods: [this.takeaway] },
+    { id: 'cold', name: 'Cold brew', cat: 'Coffee', price: 3.8, mods: [this.milk, this.takeaway] },
+    { id: 'mocha', name: 'Mocha', cat: 'Coffee', price: 4.0, mods: [this.sizeCup, this.milk, this.takeaway] },
+    { id: 'brew', name: 'Breakfast tea', cat: 'Not coffee', price: 2.6, mods: [this.takeaway] },
+    { id: 'chai', name: 'Chai latte', cat: 'Not coffee', price: 3.6, mods: [this.milk, this.takeaway] },
+    { id: 'matcha', name: 'Matcha latte', cat: 'Not coffee', price: 4.0, mods: [this.milk, this.takeaway] },
+    { id: 'choc', name: 'Hot chocolate', cat: 'Not coffee', price: 3.4, mods: [this.milk, this.takeaway] },
+    { id: 'oj', name: 'Orange juice', cat: 'Not coffee', price: 3.2, mods: [] },
+    { id: 'bun', name: 'Cardamom bun', cat: 'Food', price: 4.2, mods: [this.warm] },
+    { id: 'croi', name: 'Almond croissant', cat: 'Food', price: 3.8, mods: [this.warm] },
+    { id: 'toast', name: 'Sourdough toast', cat: 'Food', price: 4.5, mods: [this.warm] },
+    { id: 'roll', name: 'Bacon roll', cat: 'Food', price: 5.6, mods: [] },
+    { id: 'banana', name: 'Banana bread', cat: 'Food', price: 3.4, mods: [this.warm] },
+    { id: 'gran', name: 'Granola pot', cat: 'Food', price: 4.8, mods: [] },
+    { id: 'beans', name: 'Beans 250g', cat: 'Shelf', price: 11.0, mods: [] },
+    { id: 'cup', name: 'Keepcup', cat: 'Shelf', price: 14.0, mods: [] }
+  ];
+
+  state = {
+    screen: 'order', cat: 'Coffee', cart: [], sheet: null, orderNo: 1043,
+    online: true, tender: null, cash: 0, receipt: null, toast: null, minutes: 624,
+    soldOut: { toast: true }, taxRate: null, footer: 'Thanks — see you tomorrow.',
+    added: [], dialog: null, shopName: 'Bytes', logo: null, theme: 'Terracotta',
+    orders: [
+      { no: 1038, time: '07:42', lines: [{ id: 'flat', name: 'Flat white', mods: 'Oat', qty: 2, unit: 3.8 }, { id: 'bun', name: 'Cardamom bun', mods: '', qty: 1, unit: 4.2 }], tender: 'Card', synced: true },
+      { no: 1039, time: '08:05', lines: [{ id: 'filt', name: 'Filter / batch', mods: 'Takeaway', qty: 1, unit: 3.0 }], tender: 'Cash', synced: true },
+      { no: 1040, time: '08:31', lines: [{ id: 'latte', name: 'Latte', mods: 'Large · Oat', qty: 1, unit: 4.4 }, { id: 'croi', name: 'Almond croissant', mods: 'Warmed', qty: 2, unit: 3.8 }], tender: 'Card', synced: true },
+      { no: 1041, time: '09:14', lines: [{ id: 'esp', name: 'Espresso', mods: 'Double', qty: 1, unit: 3.0 }], tender: 'Cash', synced: true, voided: true },
+      { no: 1042, time: '09:58', lines: [{ id: 'capp', name: 'Cappuccino', mods: 'Regular', qty: 2, unit: 3.9 }, { id: 'gran', name: 'Granola pot', mods: '', qty: 1, unit: 4.8 }], tender: 'Card', synced: true }
+    ]
+  };
+
+  themeDefs = [
+    { label: 'Terracotta', h: 45, h2: 118 },
+    { label: 'Espresso', h: 28, h2: 95, c: 0.7 },
+    { label: 'Sage', h: 132, h2: 48 },
+    { label: 'Plum', h: 352, h2: 145 },
+    { label: 'Ocean', h: 232, h2: 150 }
+  ];
+  rampL = [97, 92, 85, 75, 66, 56, 45, 35, 25];
+  rampC = [0.02, 0.05, 0.09, 0.13, 0.14, 0.14, 0.13, 0.11, 0.08];
+  ramp(h, mul) {
+    return this.rampL.map((L, i) => 'oklch(' + L + '% ' + (this.rampC[i] * (mul || 1)).toFixed(3) + ' ' + h + ')');
+  }
+  applyTheme() {
+    const el = document.documentElement;
+    const names = i => ['--color-accent-' + (i + 1) * 100, '--color-accent-2-' + (i + 1) * 100];
+    if (this.state.theme === 'Terracotta') {
+      this.rampL.forEach((_, i) => names(i).forEach(n => el.style.removeProperty(n)));
+      el.style.removeProperty('--color-accent');
+      el.style.removeProperty('--color-accent-2');
+      return;
+    }
+    const t = this.themeDefs.find(x => x.label === this.state.theme) || this.themeDefs[0];
+    const a = this.ramp(t.h, t.c), b = this.ramp(t.h2, (t.c || 1) * 0.75);
+    a.forEach((v, i) => el.style.setProperty('--color-accent-' + (i + 1) * 100, v));
+    b.forEach((v, i) => el.style.setProperty('--color-accent-2-' + (i + 1) * 100, v));
+    el.style.setProperty('--color-accent', a[4]);
+    el.style.setProperty('--color-accent-2', b[4]);
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+
+  groups = { Size: this.sizeCup, Shots: this.sizeShot, Milk: this.milk, Cup: this.takeaway, Prep: this.warm };
+  items = () => this.menu.concat(this.state.added);
+  slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  parseCsv(text) {
+    const known = Object.keys(this.groups);
+    return text.split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(line => {
+      const c = line.split(',').map(s => s.trim());
+      const price = parseFloat(c[2]);
+      if (!c[0] || isNaN(price)) return null;
+      const mods = (c[3] || '').split(';').map(s => s.trim()).filter(s => known.some(k => k.toLowerCase() === s.toLowerCase()))
+        .map(s => this.groups[known.find(k => k.toLowerCase() === s.toLowerCase())]);
+      const cat = ['Coffee', 'Not coffee', 'Food', 'Shelf'].find(k => k.toLowerCase() === (c[1] || '').toLowerCase()) || 'Food';
+      return { id: this.slug(c[0]), name: c[0], cat, price, mods };
+    }).filter(Boolean);
+  }
+  mergeItems(rows) {
+    const added = this.state.added.slice();
+    const base = this.menu;
+    let created = 0, updated = 0;
+    rows.forEach(row => {
+      const bi = base.findIndex(m => m.id === row.id), ai = added.findIndex(m => m.id === row.id);
+      if (ai > -1) { added[ai] = row; updated++; }
+      else if (bi > -1) { this.menu[bi] = { ...base[bi], price: row.price, cat: row.cat, mods: row.mods }; updated++; }
+      else { added.push(row); created++; }
+    });
+    this.setState(prev => ({ added: prev.added.map(x => added.find(y => y.id === x.id) || x).concat(added.filter(y => !prev.added.some(x => x.id === y.id))), dialog: null }));
+    this.toast(created + ' item(s) added, ' + updated + ' updated');
+  }
+
+  money = n => '£' + n.toFixed(2);
+  rate = () => (this.state.taxRate ?? this.props.taxRate ?? 20) / 100;
+  orderTotal = o => o.lines.reduce((s, l) => s + l.unit * l.qty, 0);
+  cartTotal = () => this.state.cart.reduce((s, l) => s + l.unit * l.qty, 0);
+  liveOrders = () => this.state.orders.filter(o => !o.voided);
+
+  toast(msg, actionLabel, action) {
+    clearTimeout(this._tt);
+    this.setState({ toast: { msg, actionLabel, action } });
+    this._tt = setTimeout(() => this.setState({ toast: null }), 5200);
+  }
+  componentWillUnmount() { clearTimeout(this._tt); }
+
+  defaults(item) { const s = {}; item.mods.forEach(g => { s[g.id] = 0; }); return s; }
+  modLabel(item, sel) {
+    return item.mods.map(g => g.opts[sel[g.id]]).filter((o, i) => o && sel[item.mods[i].id] !== 0).map(o => o.label).join(' · ');
+  }
+  unitPrice(item, sel) { return item.price + item.mods.reduce((s, g) => s + g.opts[sel[g.id]].d, 0); }
+
+  add(item, sel, qty) {
+    const mods = this.modLabel(item, sel), unit = this.unitPrice(item, sel);
+    this.setState(prev => {
+      const cart = prev.cart.slice();
+      const i = cart.findIndex(l => l.id === item.id && l.mods === mods);
+      if (i > -1) cart[i] = { ...cart[i], qty: cart[i].qty + qty };
+      else cart.push({ key: item.id + mods + Math.random().toString(36).slice(2), id: item.id, name: item.name, mods, qty, unit, sel });
+      return { cart };
+    });
+  }
+
+  renderVals() {
+    const S = this.state, r = this.rate();
+    const sub = this.cartTotal(), tax = sub - sub / (1 + r);
+    const taxPct = Math.round(r * 100);
+    const cats = ['Coffee', 'Not coffee', 'Food', 'Shelf'];
+    const queuedCount = S.orders.filter(o => !o.synced && !o.voided).length;
+    const go = s => () => this.setState({ screen: s, tender: null, cash: 0 });
+
+    const nav = [
+      ['order', 'Order', ic('<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>')],
+      ['history', 'History', ic('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/>')],
+      ['summary', 'Day', ic('<line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="9"/><line x1="18" y1="20" x2="18" y2="4"/>')],
+      ['menu', 'Menu', ic('<line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/>')],
+      ['settings', 'Setup', ic('<line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="17" x2="21" y2="17"/><circle cx="9" cy="7" r="2.6"/><circle cx="16" cy="17" r="2.6"/>')]
+    ];
+    const active = S.screen === 'checkout' || S.screen === 'receipt' ? 'order' : S.screen;
+    const navItems = nav.map(([id, label, icon]) => ({
+      label, icon, tap: go(id),
+      bg: active === id ? 'var(--color-bg)' : 'transparent',
+      fg: active === id ? 'var(--color-accent-800)' : 'var(--color-accent-200)'
+    }));
+
+    const titles = {
+      order: ['Order', 'Tap to add · pencil to customise'],
+      checkout: ['Checkout', 'Take payment, then hand over the receipt'],
+      receipt: ['Receipt', 'Order complete'],
+      history: ['Today', 'Wednesday 1 September · ' + this.liveOrders().length + ' orders · ' + (S.orders.length - this.liveOrders().length) + ' voided'],
+      summary: ['End of day', 'Wednesday 1 September · shift totals'],
+      menu: ['Menu', this.items().length + ' items · single-level modifiers'],
+      settings: ['Setup', 'Brand, tax, receipts and sync']
+    }[S.screen];
+
+    const tiles = this.items().filter(m => m.cat === S.cat).map(item => {
+      const out = !!S.soldOut[item.id];
+      return {
+        name: item.name, price: this.money(item.price),
+        hint: out ? 'Sold out' : (item.mods.length ? '' : ''),
+        hasMods: item.mods.length > 0 && !out,
+        bg: out ? 'var(--color-neutral-200)' : 'var(--color-neutral-100)',
+        fg: out ? 'var(--color-neutral-500)' : 'var(--color-text)',
+        cursor: out ? 'not-allowed' : 'pointer',
+        tap: out ? () => {} : () => this.add(item, this.defaults(item), 1),
+        customise: e => { if (e) e.stopPropagation(); this.setState({ sheet: { itemId: item.id, sel: this.defaults(item), qty: 1, lineKey: null } }); }
+      };
+    });
+
+    const setQty = (key, delta) => {
+      this.setState(prev => ({ cart: prev.cart.map(l => l.key === key ? { ...l, qty: l.qty + delta } : l).filter(l => l.qty > 0) }));
+    };
+    const cartLines = S.cart.map(l => ({
+      name: l.name, mods: l.mods, hasMods: !!l.mods, qty: l.qty, qtyX: l.qty + '×',
+      total: this.money(l.unit * l.qty),
+      inc: () => setQty(l.key, 1),
+      dec: () => setQty(l.key, -1),
+      remove: () => {
+        this.setState(prev => ({ cart: prev.cart.filter(x => x.key !== l.key) }));
+        this.toast(l.name + ' removed', 'Undo', () => this.setState({ cart: S.cart, toast: null }));
+      },
+      edit: () => { const item = this.items().find(m => m.id === l.id); this.setState({ sheet: { itemId: l.id, sel: { ...this.defaults(item), ...l.sel }, qty: l.qty, lineKey: l.key } }); }
+    }));
+
+    const sheet = S.sheet, sItem = sheet && this.items().find(m => m.id === sheet.itemId);
+    const sheetGroups = sItem ? sItem.mods.map(g => ({
+      label: g.label,
+      opts: g.opts.map((o, i) => ({
+        label: o.label, delta: o.d ? '+' + this.money(o.d).slice(1) : '',
+        bg: sheet.sel[g.id] === i ? 'var(--color-accent)' : 'var(--color-neutral-100)',
+        fg: sheet.sel[g.id] === i ? 'var(--color-bg)' : 'var(--color-text)',
+        tap: () => this.setState(prev => ({ sheet: { ...prev.sheet, sel: { ...prev.sheet.sel, [g.id]: i } } }))
+      }))
+    })) : [];
+
+    const tenderDef = [['Cash', 'Drawer · change calculated'], ['Card', 'Paid on the terminal · recorded here']];
+    const tenders = tenderDef.map(([label, note]) => ({
+      label, note,
+      border: S.tender === label ? 'var(--color-accent)' : 'var(--color-divider)',
+      bg: S.tender === label ? 'var(--color-accent-100)' : 'var(--color-neutral-100)',
+      fg: 'var(--color-text)',
+      tap: () => this.setState({ tender: label, cash: label === 'Cash' ? Math.ceil(sub) : 0 })
+    }));
+    const cashChoices = [sub, Math.ceil(sub), Math.ceil(sub / 5) * 5, Math.ceil(sub / 10) * 10, Math.ceil(sub / 10) * 10 + 10]
+      .filter((v, i, a) => a.indexOf(v) === i);
+    const cashOptions = cashChoices.map((v, i) => ({
+      label: i === 0 ? 'Exact' : this.money(v),
+      bg: S.cash === v ? 'var(--color-accent)' : 'var(--color-neutral-100)',
+      fg: S.cash === v ? 'var(--color-bg)' : 'var(--color-text)',
+      tap: () => this.setState({ cash: v })
+    }));
+
+    const hhmm = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+    const complete = () => {
+      const t = S.minutes + 3;
+      const o = {
+        no: S.orderNo, time: hhmm(t),
+        lines: S.cart.map(l => ({ id: l.id, name: l.name, mods: l.mods, qty: l.qty, unit: l.unit })),
+        tender: S.tender, synced: S.online, tendered: S.tender === 'Cash' ? S.cash : null
+      };
+      this.setState(prev => ({ orders: [...prev.orders, o], receipt: o, cart: [], orderNo: prev.orderNo + 1, screen: 'receipt', minutes: t }));
+      if (!S.online) this.toast('Saved on this tablet — will sync when back online');
+    };
+
+    const rec = S.receipt;
+    const recTotal = rec ? this.orderTotal(rec) : 0;
+    const receiptLines = rec ? rec.lines.map(l => ({ qtyX: l.qty + '×', name: l.name, mods: l.mods, hasMods: !!l.mods, total: this.money(l.unit * l.qty) })) : [];
+
+    const historyRows = S.orders.slice().reverse().map(o => ({
+      no: '#' + o.no, time: o.time,
+      items: o.lines.map(l => l.qty + '× ' + l.name).join(', '),
+      tender: o.voided ? '—' : o.tender,
+      total: this.money(this.orderTotal(o)),
+      sync: o.voided ? 'Voided' : (o.synced ? 'Synced' : 'Queued'),
+      syncClass: o.voided ? 'tag-neutral' : (o.synced ? 'tag-accent-2' : 'tag-accent'),
+      opacity: o.voided ? '0.5' : '1',
+      canVoid: !o.voided, voided: !!o.voided,
+      void: () => {
+        this.setState(prev => ({ orders: prev.orders.map(x => x.no === o.no ? { ...x, voided: true } : x) }));
+        this.toast('Order #' + o.no + ' voided', 'Undo', () => this.setState({ orders: S.orders, toast: null }));
+      }
+    }));
+
+    const live = this.liveOrders();
+    const daySales = live.reduce((s, o) => s + this.orderTotal(o), 0);
+    const cashSales = live.filter(o => o.tender === 'Cash').reduce((s, o) => s + this.orderTotal(o), 0);
+    const cardSales = daySales - cashSales;
+    const kpis = [
+      { label: 'Total sales', value: this.money(daySales), note: live.length + ' orders · ' + (S.orders.length - live.length) + ' voided' },
+      { label: 'Cash', value: this.money(cashSales), note: 'Count the drawer against this' },
+      { label: 'Card', value: this.money(cardSales), note: 'Terminal batch should match' },
+      { label: 'Tax (' + taxPct + '%)', value: this.money(daySales - daySales / (1 + r)), note: 'Included in prices' },
+      { label: 'Average order', value: this.money(live.length ? daySales / live.length : 0), note: 'Across the shift' }
+    ];
+    const tally = {};
+    live.forEach(o => o.lines.forEach(l => {
+      tally[l.name] = tally[l.name] || { qty: 0, total: 0 };
+      tally[l.name].qty += l.qty; tally[l.name].total += l.unit * l.qty;
+    }));
+    const ranked = Object.entries(tally).sort((a, b) => b[1].qty - a[1].qty).slice(0, 6);
+    const maxQty = ranked.length ? ranked[0][1].qty : 1;
+    const topItems = ranked.map(([name, v]) => ({ name, qty: v.qty, total: this.money(v.total), bar: Math.round(20 + 90 * v.qty / maxQty) + 'px' }));
+
+    const menuRows = this.items().map(m => {
+      const out = !!S.soldOut[m.id];
+      return {
+        name: m.name, cat: m.cat, price: this.money(m.price),
+        mods: m.mods.map(g => g.label).join(', ') || '—',
+        justify: out ? 'flex-start' : 'flex-end',
+        trackBg: out ? 'var(--color-neutral-400)' : 'var(--color-accent-2-500)',
+        toggle: () => this.setState(prev => ({ soldOut: { ...prev.soldOut, [m.id]: !prev.soldOut[m.id] } }))
+      };
+    });
+
+    const d = S.dialog;
+    const patch = p => this.setState(prev => ({ dialog: { ...prev.dialog, ...p } }));
+    const csvRows = d && d.mode === 'csv' ? this.parseCsv(d.text || '') : [];
+    const groupNames = Object.keys(this.groups);
+    const dialogVals = {
+      openNewItem: () => this.setState({ dialog: { mode: 'new', name: '', cat: S.cat, price: '', mods: [] } }),
+      openCsv: () => this.setState({ dialog: { mode: 'csv', text: '', file: '' } }),
+      closeDialog: () => this.setState({ dialog: null }),
+      newOpen: !!d && d.mode === 'new',
+      csvOpen: !!d && d.mode === 'csv',
+      formName: d ? d.name || '' : '', formPrice: d ? d.price || '' : '',
+      setFormName: e => patch({ name: e.target.value }),
+      setFormPrice: e => patch({ price: e.target.value.replace(/[^0-9.]/g, '') }),
+      formCats: cats.map(c => ({
+        label: c, tap: () => patch({ cat: c }),
+        bg: d && d.cat === c ? 'var(--color-accent)' : 'var(--color-neutral-100)',
+        fg: d && d.cat === c ? 'var(--color-bg)' : 'var(--color-text)'
+      })),
+      formMods: groupNames.map(g => {
+        const on = !!(d && d.mods && d.mods.indexOf(g) > -1);
+        return {
+          label: g, bg: on ? 'var(--color-accent-2-500)' : 'var(--color-neutral-100)', fg: on ? 'var(--color-neutral-100)' : 'var(--color-text)',
+          tap: () => this.setState(prev => {
+            const cur = prev.dialog.mods || [], isOn = cur.indexOf(g) > -1;
+            return { dialog: { ...prev.dialog, mods: isOn ? cur.filter(x => x !== g) : cur.concat([g]) } };
+          })
+        };
+      }),
+      formInvalid: !d || !d.name || !(parseFloat(d.price) > 0),
+      saveItem: () => {
+        const row = { id: this.slug(d.name), name: d.name.trim(), cat: d.cat, price: parseFloat(d.price), mods: d.mods.map(g => this.groups[g]) };
+        this.mergeItems([row]);
+      },
+      csvText: d ? d.text || '' : '',
+      setCsvText: e => patch({ text: e.target.value }),
+      csvFileNote: d && d.file ? d.file : 'name, category, price, groups',
+      pickCsv: e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const fr = new FileReader();
+        fr.onload = () => this.setState({ dialog: { mode: 'csv', text: String(fr.result), file: f.name } });
+        fr.readAsText(f);
+      },
+      csvPreview: d && d.text ? csvRows.length + ' valid row(s) found' : '',
+      csvInvalid: csvRows.length === 0,
+      csvCta: csvRows.length ? 'Import ' + csvRows.length + ' item(s)' : 'Import',
+      importCsv: () => this.mergeItems(csvRows)
+    };
+
+    const taxOptions = [0, 5, 12.5, 20].map(v => ({
+      label: v + '%',
+      bg: taxPct === Math.round(v) ? 'var(--color-accent)' : 'var(--color-neutral-100)',
+      fg: taxPct === Math.round(v) ? 'var(--color-bg)' : 'var(--color-text)',
+      tap: () => this.setState({ taxRate: v })
+    }));
+
+    const syncNote = S.online
+      ? (queuedCount ? queuedCount + ' order(s) waiting to upload — tap sync.' : 'Online. Every order on this tablet is on the server.')
+      : 'Offline. Orders are saved here and upload themselves the moment the wifi is back.';
+
+    return {
+      ...dialogVals,
+      logoBg: S.logo ? 'center/cover no-repeat url(' + S.logo + ')' : 'none',
+      shopName: S.shopName, shopInitial: (S.shopName || 'B').trim().charAt(0).toUpperCase(),
+      setShopName: e => this.setState({ shopName: e.target.value }),
+      hasLogo: !!S.logo, noLogo: !S.logo, logo: S.logo || '',
+      logoCta: S.logo ? 'Replace logo' : 'Upload logo',
+      clearLogo: () => this.setState({ logo: null }),
+      pickLogo: e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const fr = new FileReader();
+        fr.onload = () => this.setState({ logo: String(fr.result) });
+        fr.readAsDataURL(f);
+      },
+      themes: this.themeDefs.map(t => {
+        const a = this.ramp(t.h, t.c), b = this.ramp(t.h2, (t.c || 1) * 0.75);
+        return {
+          label: t.label, swatch: a[4], swatch2: b[4],
+          border: S.theme === t.label ? 'var(--color-accent)' : 'var(--color-divider)',
+          tap: () => this.setState({ theme: t.label })
+        };
+      }),
+      navItems, showLabels: this.props.showRailLabels ?? true,
+      screenTitle: titles[0], screenSub: titles[1], clock: hhmm(S.minutes),
+      netIcon: S.online
+        ? ic('<path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>')
+        : ic('<line x1="3" y1="3" x2="21" y2="21"/><path d="M8.5 16a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>'),
+      netLabel: S.online ? 'Online' : 'Offline',
+      netFg: S.online ? 'var(--color-accent-2-300)' : 'var(--color-accent-300)',
+      netDot: S.online ? 'var(--color-accent-2-500)' : 'var(--color-accent-500)',
+      toggleOnline: () => this.setState({ online: !S.online }),
+      queued: queuedCount > 0 && S.online,
+      queuedLabel: queuedCount + ' queued · sync now',
+      syncNow: () => {
+        if (!S.online) return this.toast('Still offline — nothing to send yet');
+        this.setState(prev => ({ orders: prev.orders.map(o => ({ ...o, synced: true })) }));
+        this.toast(queuedCount ? queuedCount + ' order(s) synced' : 'Everything already synced');
+      },
+      syncNote,
+
+      isOrder: S.screen === 'order', isCheckout: S.screen === 'checkout', isReceipt: S.screen === 'receipt',
+      isHistory: S.screen === 'history', isSummary: S.screen === 'summary', isMenu: S.screen === 'menu', isSettings: S.screen === 'settings',
+
+      cats: cats.map(c => ({
+        label: c, tap: () => this.setState({ cat: c }),
+        bg: S.cat === c ? 'var(--color-accent)' : 'var(--color-neutral-100)',
+        fg: S.cat === c ? 'var(--color-bg)' : 'var(--color-text)'
+      })),
+      tiles, cartLines,
+      orderLabel: 'Order #' + S.orderNo,
+      cartCountLabel: S.cart.reduce((s, l) => s + l.qty, 0) + ' items',
+      hasCart: S.cart.length > 0, cartEmpty: S.cart.length === 0,
+      clearCart: () => { this.setState({ cart: [] }); this.toast('Order cleared', 'Undo', () => this.setState({ cart: S.cart, toast: null })); },
+      netTotal: this.money(sub - tax), taxLabel: 'Tax incl. (' + taxPct + '%)', taxTotal: this.money(tax),
+      grandTotal: this.money(sub), chargeLabel: sub ? 'Charge ' + this.money(sub) : 'Charge',
+      goCheckout: () => this.setState({ screen: 'checkout', tender: null, cash: 0 }),
+
+      tenders, isCash: S.tender === 'Cash', cashOptions,
+      changeDue: this.money(Math.max(0, S.cash - sub)),
+      noTender: !S.tender, takeLabel: S.tender === 'Cash' ? 'Take cash' : (S.tender === 'Card' ? 'Card taken — finish' : 'Choose a payment'),
+      backToOrder: () => this.setState({ screen: 'order' }),
+      completeOrder: complete,
+
+      receiptLines, receiptTotal: this.money(recTotal),
+      receiptTax: this.money(recTotal - recTotal / (1 + r)),
+      receiptMeta: rec ? 'Order #' + rec.no + ' · ' + rec.time + ' · 1 Sep' : '',
+      receiptTender: rec ? rec.tender : '',
+      receiptTendered: rec && rec.tendered ? this.money(rec.tendered) + ' given' : this.money(recTotal),
+      receiptFooter: S.footer,
+      printReceipt: () => this.toast('Sent to Star TSP143'),
+      emailReceipt: () => this.toast('Receipt emailed'),
+      newOrder: () => this.setState({ screen: 'order', tender: null, cash: 0, receipt: null }),
+
+      historyRows, kpis, topItems, menuRows, taxOptions,
+      closeNote: 'Count the drawer, match the terminal batch, then print. Voided orders stay in history but are out of every total.',
+      printZ: () => this.toast('Z-report printed'),
+      footerText: S.footer, setFooter: e => this.setState({ footer: e.target.value }),
+
+      sheetOpen: !!sheet, sheetName: sItem ? sItem.name : '', sheetBase: sItem ? this.money(sItem.price) : '',
+      sheetGroups, sheetQty: sheet ? sheet.qty : 1,
+      sheetCta: sheet && sItem ? (sheet.lineKey ? 'Update · ' + this.money(this.unitPrice(sItem, sheet.sel) * sheet.qty) : 'Add · ' + this.money(this.unitPrice(sItem, sheet.sel) * sheet.qty)) : 'Add',
+      sheetInc: () => this.setState(prev => ({ sheet: { ...prev.sheet, qty: prev.sheet.qty + 1 } })),
+      sheetDec: () => this.setState(prev => ({ sheet: { ...prev.sheet, qty: Math.max(1, prev.sheet.qty - 1) } })),
+      closeSheet: () => this.setState({ sheet: null }),
+      confirmSheet: () => {
+        if (sheet.lineKey) {
+          const mods = this.modLabel(sItem, sheet.sel);
+          this.setState(prev => ({
+            cart: prev.cart.map(l => l.key === sheet.lineKey ? { ...l, mods, qty: sheet.qty, unit: this.unitPrice(sItem, sheet.sel), sel: sheet.sel } : l),
+            sheet: null
+          }));
+        } else {
+          this.add(sItem, sheet.sel, sheet.qty);
+          this.setState({ sheet: null });
+        }
+      },
+
+      pencilIcon: ic('<path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 3 22l1.5-4.5Z"/>'),
+      plusIcon: ic('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
+      minusIcon: ic('<line x1="5" y1="12" x2="19" y2="12"/>'),
+      trashIcon: ic('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>'),
+      xIcon: ic('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+
+      toastOpen: !!S.toast, toastMsg: S.toast ? S.toast.msg : '',
+      toastHasAction: !!(S.toast && S.toast.actionLabel), toastActionLabel: S.toast ? S.toast.actionLabel : '',
+      toastAction: S.toast && S.toast.action ? S.toast.action : () => {}
+    };
+  }
+}
+
+</script>
+</body>
+</html>

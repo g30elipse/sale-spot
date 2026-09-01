@@ -1,0 +1,3 @@
+# Client-side routing: serve index.html for app routes so a refresh on
+# /history or /settings isn't a 404. Real files (assets, sw.js) win first.
+/*  /index.html  200
